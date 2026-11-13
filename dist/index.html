@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Replay historical bank failure alerts using public FDIC data.">
+<title>Bank Failure Early Warning</title>
+<link rel="stylesheet" href="style.css">
+<script type="module" src="app.mjs"></script>
+</head>
+<body>
+<header class="mast"><div class="wrap"><strong>Bank Failure Early Warning</strong><a href="#method">Methodology</a></div></header>
+<main class="wrap">
+<section class="hero">
+  <p class="eyebrow">FDIC data · Historical backtest</p>
+  <h1>Which banks would you have flagged?</h1>
+  <p>Replay an annual review of U.S. banks. Pick a date, set the number of alerts your team can review, and reveal which banks failed over the next 12 months.</p>
+</section>
+<p id="status" role="status">Loading the historical backtest…</p>
+<div id="dashboard" hidden>
+<section class="controls" aria-label="Replay controls">
+  <label>Review date<select id="date"></select></label>
+  <label>Model<select id="model"></select></label>
+  <label>Alert budget<select id="budget"><option>5</option><option>10</option><option selected>20</option><option>50</option><option>100</option></select></label>
+  <button type="button" id="reveal" aria-pressed="false">Reveal outcomes</button>
+</section>
+<section id="summary" class="summary" aria-label="Review summary" aria-live="polite"></section>
+<div class="grid">
+  <section class="panel">
+    <div class="panel-head"><h2>Alert queue</h2><p id="cohort-description"></p></div>
+    <div class="scroll"><table>
+      <thead><tr><th scope="col">Rank</th><th scope="col">Bank</th><th id="outcome-heading" scope="col" hidden>Outcome</th></tr></thead>
+      <tbody id="queue"></tbody>
+    </table></div>
+  </section>
+  <section class="panel" id="details" tabindex="-1" aria-live="polite"></section>
+</div>
+<section class="panel missed" id="missed" hidden></section>
+<section class="panel benchmark">
+  <div class="panel-head"><h2>Performance across all held-out dates</h2><p>Each model receives 20 alerts per annual review. Metrics pool all six review dates.</p></div>
+  <div class="scroll"><table>
+    <thead><tr><th scope="col">Model</th><th scope="col">Failures caught</th><th scope="col">Alert precision</th><th scope="col">Average precision</th><th scope="col">Median lead time</th></tr></thead>
+    <tbody id="results"></tbody>
+  </table></div>
+</section>
+</div>
+<section id="method">
+  <h2>Data &amp; methodology</h2>
+  <p>The replay scores banks on March 1 using financials for the previous December 31. March 1 is an assumed reporting lag. FDIC records were retrieved retrospectively and may include revisions. Review outcomes cover the following 12 months and count FDIC failure records among banks eligible to be scored.</p>
+  <p>Model fitting used year-end reports from 2007–2013, selection used 2014–2018, and the replay uses 2019–2024. Average precision summarizes how well the scores rank future failures across thresholds. Alert precision is the share of alerts followed by failure. The model’s feature impacts come from replacing one input at a time with its training median and measuring the score change. They depend on that reference value and are descriptive.</p>
+  <p>This project evaluates historical screening performance. The scores are uncalibrated and intended for ranking in the replay.</p>
+  <a href="https://api.fdic.gov/banks/docs/">FDIC BankFind Suite data and documentation</a>
+</section>
+</main>
+<footer class="wrap">Portfolio project by Alex Sandoval</footer>
+</body>
+</html>
